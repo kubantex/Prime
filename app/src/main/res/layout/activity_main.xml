@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:background="@drawable/bambus">
+
+
+    <TextView
+        android:id="@+id/poleWynik"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="Wynik: 0"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <FrameLayout
+        android:id="@+id/poleGry"
+        android:layout_width="260dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/tlo"
+        android:layout_gravity="center_horizontal">
+        
+
+        <ImageView
+            android:id="@+id/malpa"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:src="@drawable/malpa1"
+            android:layout_gravity="bottom"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/bananyPierw"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/banany"
+            android:text="11"
+            android:textSize="20dp"
+
+            android:visibility="visible"/>
+
+
+
+        <ImageView
+            android:id="@+id/bananyZloz"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/banany"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/banan"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/banan"
+            android:visibility="invisible"/>
+
+        <LinearLayout
+            android:id="@+id/startGry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prime drop"
+                android:textSize="24sp"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/poleRekord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Najlepszy Wynik : 100"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="80dp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="START"
+                android:layout_marginTop="60dp"
+                android:onClick="startGame"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WYJśCie"
+                android:layout_marginTop="20dp"
+                android:onClick="quitGame"/>
+
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
+</LinearLayout>
