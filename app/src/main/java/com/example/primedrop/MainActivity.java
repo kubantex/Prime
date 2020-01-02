@@ -30,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout startGry;
 
     //Grafika
-    private ImageView malpa, bananyPierw, bananyZloz, banan;
+    private TextView bananyPierw, bananyZloz;
+    private int bananPierwWartosc = 0, bananZlozWartosc = 0;
+    private ImageView malpa, banan;
     private Drawable imgMalpaLewo, imgMalpaPrawo ;
 
     //Rozmiar malpy
@@ -59,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean action_flg = false;
     private boolean banan_flg = false;
 
-    TextView bananyPierwsz;
-    int newNumber = 11;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         poleGry = findViewById(R.id.poleGry);
         startGry = findViewById(R.id.startGry);
         malpa = findViewById(R.id.malpa);
-       // bananyPierwsz =(TextView)findViewById(R.id.bananyPierw);
-       // bananyPierwsz.setText(newNumber);
         bananyPierw = findViewById(R.id.bananyPierw);
         bananyZloz = findViewById(R.id.bananyZloz);
         banan = findViewById(R.id.banan);
@@ -100,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (hitCheck(bananyPierwCenterX, bananyPierwCenterY)) {
             bananyPierwY = frameHeight + 100;
+            calculateAndSetNewPrimeNumber();
             Wynik += 10;
             soundPlayer.playHitPierwSound();
         }
@@ -151,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (hitCheck(bananyZlozCenterX, bananyZlozCenterY)) {
             bananyZlozY = frameHeight + 100;
+
+            calculateAndSetNewCompositeNumber();
 
             // Zmiana szerokosci ramki
 
@@ -269,6 +270,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void startGame(View view) {
 
+        calculateAndSetNewCompositeNumber();
+        calculateAndSetNewPrimeNumber();
+
         start_flg = true;
         startGry.setVisibility(View.INVISIBLE);
 
@@ -327,6 +331,16 @@ public class MainActivity extends AppCompatActivity {
         }else{
             finish();
         }
+    }
+
+    private void calculateAndSetNewCompositeNumber() {
+        bananZlozWartosc = 22; //Tutaj wyliczenie jakiejs wartosci
+        bananyZloz.setText(String.valueOf(bananZlozWartosc));
+    }
+
+    private void calculateAndSetNewPrimeNumber() {
+        bananPierwWartosc = 11; //Tutaj wyliczenie wartości pierwszej jakiejś
+        bananyPierw.setText(String.valueOf(bananPierwWartosc));
     }
 }
 

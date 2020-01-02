@@ -38,24 +38,24 @@
             android:layout_gravity="bottom"
             android:visibility="invisible"/>
 
-        <ImageView
+        <TextView
             android:id="@+id/bananyPierw"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/banany"
-            android:text="11"
-            android:textSize="20dp"
+            android:text=""
+            android:textSize="20sp"
+            android:visibility="invisible"/>
 
-            android:visibility="visible"/>
-
-
-
-        <ImageView
+        <TextView
             android:id="@+id/bananyZloz"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/banany"
+            android:background="@drawable/banany"
+            android:text=""
+            android:textSize="20sp"
             android:visibility="invisible"/>
+
 
         <ImageView
             android:id="@+id/banan"
