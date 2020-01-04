@@ -25,27 +25,17 @@ public class MainActivity extends AppCompatActivity {
 
     //Pole gry
     FrameLayout poleGry;
-    private int frameHeight, frameWidth, initialFrameWidth;
-
-    //Grafika
-    private TextView bananyZloz;
-    private int bananZlozWartosc = 0;
-    private ImageView malpa, banan;
-
-    private float bananX, bananY;
 
     //Wynik
     private TextView poleWynik;
-    private int wynik, Czas;
+    private int wynik;
 
     //Klasa
     private Timer timer;
     private Handler handler = new Handler();
-    private SoundPlayer soundPlayer;
 
     //Start
     private boolean start_flg = false;
-    private boolean banan_flg = false;
 
     private PrimeGame primeGame;
 
@@ -58,61 +48,15 @@ public class MainActivity extends AppCompatActivity {
         // gra uruchomiona i gdzie ma utworzyć wszystkie elementy
         primeGame = new PrimeGame(this);
 
-        soundPlayer = new SoundPlayer(this);
-
         poleGry = findViewById(R.id.poleGry);
-        banan = findViewById(R.id.banan);
         poleWynik = findViewById(R.id.poleWynik);
     }
 
     public void zmianaPozycji() {
-
-        //Banan
-        /*
-        if (!banan_flg && Czas % 10000 == 0) {
-            banan_flg = true;
-            bananY = -5000;
-            bananX = (float) Math.floor(Math.random() * (frameWidth - banan.getWidth()));
-        }
-
-        if (banan_flg) {
-            bananY += 20;
-
-            float bananCenterX = bananX + banan.getWidth() / 2;
-            float bananCenterY = bananY + banan.getHeight() / 2;
-
-            if (hitCheck(bananCenterX, bananCenterY)) {
-                bananY = frameHeight + 30;
-                wynik += 30;
-
-                // Zmiana szerokosci ramki
-
-                if (initialFrameWidth > frameWidth * 110 / 100) {
-                    frameWidth = frameWidth * 110 / 100;
-                    zmianaSzerokosciPola(frameWidth);
-                }
-                soundPlayer.playHitBananSound();
-            }
-
-            if (bananY > frameHeight) banan_flg = false;
-            banan.setX(bananX);
-            banan.setY(bananY);
-        }
-        */
-
-        poleWynik.setText("Wynik : " + wynik);
-
         primeGame.calculateFrame();
         primeGame.drawFrame();
 
     }
-
-    public void zmianaSzerokosciPola(int frameWidth) {
-        ViewGroup.LayoutParams params = poleGry.getLayoutParams();
-        params.width = frameWidth;
-        poleGry.setLayoutParams(params);
-    }
-
 
     public void koniecGry() {
         //Stop zegara
@@ -127,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        zmianaSzerokosciPola(initialFrameWidth);
-
-        banan.setVisibility(View.INVISIBLE);
 
         primeGame.endGame();
     }
@@ -155,17 +95,6 @@ public class MainActivity extends AppCompatActivity {
         primeGame.startGame();
 
         start_flg = true;
-
-        frameWidth = initialFrameWidth;
-
-        banan.setY(3000.0f);
-        bananY = banan.getY();
-
-        banan.setVisibility(View.VISIBLE);
-
-        Czas = 0;
-        wynik = 0;
-        poleWynik.setText("Wynik : 0");
 
         timer = new Timer();
         timer.schedule(new TimerTask() {

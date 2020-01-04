@@ -27,15 +27,19 @@ public class PrimeGame {
     private static final int[] COMPOSITE = new int[]{4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28, 30, 32, 33, 34, 35, 36, 38, 39,
             40, 42, 44, 45, 46, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58, 60, 62, 63, 64, 65, 66, 68, 69, 70,
             72, 74, 75, 76, 77, 78, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100};
-
+    public static final int BONUS_BANANA_DISTANCE_CHANGE = 20;
+    public static final int IMAGE_SIZE = 100;
 
     private final Random rnd = new Random();
 
     private BananaGameObject primeBanana;
     private BananaGameObject compositeBanana;
+    private BananaGameObject bonusBanana;
 
     private MonkeyGameObject monkey;
     private Activity context;
+
+    private boolean bonusBananaIsActive;
 
     private int frameWidth;
     private int frameHeight;
@@ -43,6 +47,7 @@ public class PrimeGame {
 
     private SharedPreferences sharedPreferences;
     private int record;
+    private int time;
     private int result;
 
     // Zmienne powiazane z widokiem gry
@@ -54,6 +59,8 @@ public class PrimeGame {
     private Drawable rightLookingMonkeyDrawable;
     private TextView primeBananaView;
     private TextView compositeBananaView;
+    private ImageView bonusBananaView;
+    private TextView resultTextView;
 
     private SoundPlayer soundPlayer;
 
@@ -69,15 +76,18 @@ public class PrimeGame {
 
         activeGame = false;
         primeBanana = new BananaGameObject();
-        // Te wartosci wczytac z widoku
-        primeBanana.setSizeX(50);
-        primeBanana.setSizeY(50);
+        // Te wartosci wczytac z widoku - przerobic
+        primeBanana.setSizeX(IMAGE_SIZE);
+        primeBanana.setSizeY(IMAGE_SIZE);
         compositeBanana = new BananaGameObject();
-        compositeBanana.setSizeY(50);
-        compositeBanana.setSizeX(50);
+        compositeBanana.setSizeY(IMAGE_SIZE);
+        compositeBanana.setSizeX(IMAGE_SIZE);
+        bonusBanana = new BananaGameObject();
+        bonusBanana.setSizeX(IMAGE_SIZE);
+        bonusBanana.setSizeY(IMAGE_SIZE);
         monkey = new MonkeyGameObject();
-        monkey.setSizeX(50);
-        monkey.setSizeY(50);
+        monkey.setSizeX(IMAGE_SIZE);
+        monkey.setSizeY(IMAGE_SIZE);
 
         soundPlayer = new SoundPlayer(context);
 
@@ -90,6 +100,8 @@ public class PrimeGame {
         rightLookingMonkeyDrawable = context.getResources().getDrawable(R.drawable.malpa1);
         primeBananaView = context.findViewById(R.id.bananyPierw);
         compositeBananaView = context.findViewById(R.id.bananyZloz);
+        bonusBananaView = context.findViewById(R.id.banan);
+        resultTextView = context.findViewById(R.id.poleWynik);
 
         //Rekord punktowy
         sharedPreferences = context.getSharedPreferences(GAME_DATA, Context.MODE_PRIVATE);
@@ -106,13 +118,45 @@ public class PrimeGame {
      */
     public void calculateFrame() {
         calculatePrimeBananaPosition();
+        calculateBonusBananaPosition();
         calculateComposieteBananaPosition();
         calculateMonkeyPosition();
     }
 
+    private void calculateBonusBananaPosition() {
+        if (!bonusBananaIsActive && time % 10000 == 0) {
+            bonusBananaIsActive = true;
+            bonusBanana.setPositionY(-5000);
+            bonusBanana.setPositionX((float) Math.floor(Math.random() * (frameWidth - bonusBanana.getSizeX())));
+        }
+
+        if (bonusBananaIsActive) {
+            bonusBanana.setPositionY(bonusBanana.getPositionY() + BONUS_BANANA_DISTANCE_CHANGE);
+
+            float bananCenterX = bonusBanana.getPositionX() + bonusBanana.getSizeX() / 2;
+            float bananCenterY = bonusBanana.getPositionY() + bonusBanana.getSizeY() / 2;
+
+            if (hitCheck(bananCenterX, bananCenterY)) {
+                bonusBanana.setPositionY(frameHeight + 30);
+                result += 30;
+
+                // Zmiana szerokosci ramki
+                if (initialFrameWidth > frameWidth * 110 / 100) {
+                    frameWidth = frameWidth * 110 / 100;
+                    changeGameFrameWidth(frameWidth);
+                }
+                soundPlayer.playHitBananSound();
+            }
+
+            if (bonusBanana.getPositionY() > frameHeight) {
+                bonusBananaIsActive = false;
+            }
+        }
+    }
+
     private void calculateComposieteBananaPosition() {
         //Banany z liczba zlozona
-        compositeBanana.setPositionY(BANANA_MOVING_DISTANCE);
+        compositeBanana.setPositionY(compositeBanana.getPositionY() + BANANA_MOVING_DISTANCE);
 
         float bananyZlozCenterX = compositeBanana.getPositionX() + compositeBanana.getSizeX() / 2;
         float bananyZlozCenterY = compositeBanana.getPositionY() + compositeBanana.getSizeY() / 2;
@@ -172,7 +216,7 @@ public class PrimeGame {
 
     private boolean hitCheck(float x, float y) {
         return monkey.getPositionX() <= x && x <= monkey.getPositionX() + monkey.getSizeX() &&
-                monkey.getPositionY() <= y && y <= frameHeight;
+               monkey.getPositionY() <= y && y <= frameHeight;
     }
 
     private void calculateMonkeyPosition() {
@@ -205,6 +249,7 @@ public class PrimeGame {
     public void drawFrame() {
 
         monkeyView.setX(monkey.getPositionX());
+        monkeyView.setY(monkey.getPositionY());
         if (monkey.getLookingDirection() == Direction.LEFT) {
             monkeyView.setImageDrawable(leftLookingMonkeyDrawable);
         }
@@ -220,6 +265,10 @@ public class PrimeGame {
         compositeBananaView.setY(compositeBanana.getPositionY());
         compositeBananaView.setText(String.valueOf(compositeBanana.getNumberValue()));
 
+        bonusBananaView.setY(bonusBanana.getPositionY());
+        bonusBananaView.setX(bonusBanana.getPositionX());
+
+        resultTextView.setText("Wynik : " + result);
 
     }
 
@@ -230,24 +279,27 @@ public class PrimeGame {
         activeGame = true;
         result = 0;
 
+        bonusBananaIsActive = false;
+
         if (frameHeight == 0) {
             frameHeight = gameView.getHeight();
             frameWidth = gameView.getWidth();
             initialFrameWidth = frameWidth;
+            monkey.setPositionY(frameHeight - monkey.getSizeY());
         }
         frameWidth = initialFrameWidth;
         changeGameFrameWidth(initialFrameWidth);
-
 
         startGameView.setVisibility(View.INVISIBLE);
         monkeyView.setVisibility(View.VISIBLE);
         primeBananaView.setVisibility(View.VISIBLE);
         compositeBananaView.setVisibility(View.VISIBLE);
+        bonusBananaView.setVisibility(View.VISIBLE);
 
-        primeBananaView.setY(3000.0f);
-        compositeBananaView.setY(3000.0f);
+        primeBanana.setPositionY(3000.0f);
+        compositeBanana.setPositionY(3000.0f);
         monkey.setPositionX(0);
-
+        bonusBanana.setPositionY(3000.0f);
     }
 
     public void endGame() {
@@ -256,6 +308,7 @@ public class PrimeGame {
         monkeyView.setVisibility(View.INVISIBLE);
         primeBananaView.setVisibility(View.INVISIBLE);
         compositeBananaView.setVisibility(View.INVISIBLE);
+        bonusBananaView.setVisibility(View.INVISIBLE);
 
         //Aktualizacja najwyzszego wyniku
         if (result > record) {
@@ -265,6 +318,8 @@ public class PrimeGame {
             edycja.putInt(NAJWYZSZY_WYNIK, record);
             edycja.commit();
         }
+
+        changeGameFrameWidth(initialFrameWidth);
 
     }
 
